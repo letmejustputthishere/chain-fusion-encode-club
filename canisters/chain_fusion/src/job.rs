@@ -9,7 +9,7 @@ use ic_cdk::println;
 use submit_result::submit_result;
 
 use crate::{
-    job::calculate_result::fibonacci,
+    job::calculate_result::get_exchange_rate,
     state::{mutate_state, LogSource},
 };
 
@@ -20,11 +20,19 @@ pub async fn job(event_source: LogSource, event: LogEntry) {
     let new_job_event = NewJobEvent::from(event);
     // this calculation would likely exceed an ethereum blocks gas limit
     // but can easily be calculated on the IC
-    let result = fibonacci(20);
+    let result = get_exchange_rate().await;
     // we write the result back to the evm smart contract, creating a signature
     // on the transaction with chain key ecdsa and sending it to the evm via the
     // evm rpc canister
-    submit_result(result.to_string(), new_job_event.job_id).await;
+    submit_result(
+        format!(
+            "{:.1$}",
+            (result.rate as f64) / 10f64.powi(result.metadata.decimals as i32),
+            result.metadata.decimals as usize
+        ),
+        new_job_event.job_id,
+    )
+    .await;
     println!("Successfully ran job #{:?}", &new_job_event.job_id);
 }
 

@@ -3,6 +3,7 @@ mod job;
 mod lifecycle;
 mod logs;
 mod state;
+mod xrc;
 // uncomment to enable serving stored assets via http requests
 // mod storage;
 

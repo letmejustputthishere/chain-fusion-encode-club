@@ -32,6 +32,7 @@ fi
 dfx start --clean --background
 dfx ledger fabricate-cycles --icp 10000 --canister $(dfx identity get-wallet)
 dfx deploy evm_rpc
+dfx deploy xrc
 cargo build --release --target wasm32-unknown-unknown --package chain_fusion
 dfx canister create --with-cycles 10_000_000_000_000 chain_fusion
 # because the local smart contract deployment is deterministic, we can hardcode the 
